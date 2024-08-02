@@ -17,7 +17,7 @@ app.use(cors());
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
-    res.status(200).send('Hey');
+    res.status(200).send('Hello World! 🌐');
 });
 
 
