@@ -12,7 +12,7 @@ const upload = multer({ storage: storage });
 // @access  Public
 router.post('/createevent', upload.single('banner'), async (req, res) => {
     try {
-        const { eventname, eventdate, description, audience, type, price, tech, agenda, sponsors, hostname, email, country, address, city, website, instagram, approval } = req.body;
+        const { eventname, eventdate, description, audience, type, price, tech, agenda, hostname, email, country, address, city, website, instagram} = req.body;
 
         // Log the request body and file details
         console.log('Request Body:', req.body);
@@ -38,7 +38,6 @@ router.post('/createevent', upload.single('banner'), async (req, res) => {
             price,
             tech,
             agenda,
-            sponsors,
             hostname,
             email,
             country,
