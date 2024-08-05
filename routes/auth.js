@@ -5,6 +5,7 @@ const User = require('../models/User'); // Adjust the path as needed
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid'); // If using uuid for unique ids
 
+
 // @route   POST /api/auth/register
 // @desc    Register a new user
 // @access  Public
@@ -63,7 +64,6 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
-
 
 
 
