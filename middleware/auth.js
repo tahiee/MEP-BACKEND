@@ -3,7 +3,9 @@ const User = require('../models/User'); // Adjust the path to your User model
 
 const Authtoken = async (req, res, next) => {
   const authHeader = req.headers['authorization']; // Use lowercase 'authorization'
+  console.log(authHeader);
   const token = authHeader && authHeader.split(' ')[1]; // Extract token after 'Bearer'
+  console.log(token);
 
   if (!token) {
     return res.status(401).json({ message: 'Token not found' });
@@ -16,6 +18,7 @@ const Authtoken = async (req, res, next) => {
 
     req.user = await User.findById(decoded.id);
     if (!req.user) {
+      console.log('No user found with ID:', decoded.id);
       return res.status(401).json({ message: 'User not found' });
     }
 
