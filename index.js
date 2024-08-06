@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/auth", authRoutes );
-app.use("/api/auth",createEventRoute )
+app.use("/api/auth", createEventRoute )
 
 app.get("/", (req, res) => {
     res.status(200).send("Hello World! 🌐");

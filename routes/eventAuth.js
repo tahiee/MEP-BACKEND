@@ -6,12 +6,12 @@ const Authtoken = require('../middleware/auth')
 
 // Multer configuration for file storage
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
 // @route   POST /api/auth/createevent
-// @desc    Create a new event
 // @access  Public
 
+// Create Event Route
 router.post('/createevent', Authtoken, upload.single('banner'), async (req, res) => {
     try {
         const { eventname, eventdate, description, audience, type, price, tech, agenda, hostname, email, country, address, city, website, instagram } = req.body;
@@ -27,6 +27,7 @@ router.post('/createevent', Authtoken, upload.single('banner'), async (req, res)
             return res.status(400).json({ error: 'Please fill all required fields' });
         }
 
+        // Create and save the event
         const event = new Event({
             eventname,
             eventdate,
@@ -55,7 +56,7 @@ router.post('/createevent', Authtoken, upload.single('banner'), async (req, res)
 
         res.json({ message: 'Event created successfully!' });
     } catch (error) {
-        console.error('Create Event Error:', error.message); // Improved error logging
+        console.error('Create Event Error:', error.message);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -63,14 +64,14 @@ router.post('/createevent', Authtoken, upload.single('banner'), async (req, res)
 
 router.get('/myevents', Authtoken, async (req, res) => {
     try {
-      // Find events where the user ID matches the logged-in user
-      const events = await Event.find({ userId: req.user.id });
-      
-      res.json(events);
+        // Find events where the user ID matches the logged-in user
+        const events = await Event.find({ userId: req.user.id });
+
+        res.json(events);
     } catch (error) {
-      console.error('Get Events Error:', error.message);
-      res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Get Events Error:', error.message);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-  });
+});
 
 module.exports = router;

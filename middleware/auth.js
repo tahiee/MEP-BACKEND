@@ -2,15 +2,15 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User'); // Adjust the path to your User model
 
 const Authtoken = async (req, res, next) => {
-  const authHeader = req.headers['Authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers['authorization']; // Use lowercase 'authorization'
+  const token = authHeader && authHeader.split(' ')[1]; // Extract token after 'Bearer'
 
   if (!token) {
     return res.status(401).json({ message: 'Token not found' });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Ensure you have the secret key
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Ensure the secret key is set correctly
     req.user = await User.findById(decoded.id);
     if (!req.user) {
       return res.status(401).json({ message: 'User not found' });
