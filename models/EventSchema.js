@@ -1,29 +1,28 @@
 const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
-  eventname: { type: String, required: true, index: true },
-  description: { type: String },
+  eventname: { type: String, required: true },
+  eventdate: { type: Date, },
+  description: String,
   banner: {
     data: Buffer,
     contentType: String
   },
-  audience: { type: String, default: 'General' },
+  audience: String,
   type: { type: String, },
-  price: { type: Number, default: 0 },
-  tech: { type: String },
-  agenda: { type: String },
-  hostname: { type: String, },
-  eventdate: { type: Date, },
-  email: { type: String, match: /.+\@.+\..+/ },
-  country: { type: String, },
-  address: { type: String },
-  city: { type: String },
+  price: { type: Number, },
+  tech: { type: String, },
+  agenda: String,
+  hostname: String,
+  email: { type: String, },
+  country: String,
+  address: String,
+  city: String,
   socialLinks: {
-    website: { type: String },
-    instagram: { type: String }
-  }
-}, {
-  timestamps: true
+    website: String,
+    instagram: String
+  },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 
-module.exports = mongoose.model('EventDetails', eventSchema);
+module.exports = mongoose.model('eventdetails', eventSchema);
