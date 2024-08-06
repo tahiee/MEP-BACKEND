@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const Event = require('../models/EventSchema');
 const Authtoken = require('../middleware/auth')
+const jwt = require('jsonwebtoken');
 
 // Multer configuration for file storage
 const storage = multer.memoryStorage();
@@ -60,7 +61,19 @@ router.post('/createevent', Authtoken, upload.single('banner'), async (req, res)
     }
 });
 
+// Middleware to authenticate token and set req.user
+const Authtoken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
 
+    if (token == null) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+};
 router.get('/myevents', Authtoken, async (req, res) => {
     try {
       // Find events where the user ID matches the logged-in user
