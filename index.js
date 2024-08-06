@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const createEventRoute = require("./routes/eventAuth");
-const myEvents = require("./routes/eventAuth");
 require("dotenv").config();
 
 const app = express();
@@ -14,8 +13,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api/auth", authRoutes );
-app.use("/api/auth",createEventRoute );
-app.use("/api/auth", myEvents);
+app.use("/api/auth",createEventRoute )
 
 app.get("/", (req, res) => {
     res.status(200).send("Hello World! 🌐");
