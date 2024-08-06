@@ -10,11 +10,15 @@ const Authtoken = async (req, res, next) => {
   }
 
   try {
+    console.log('Received Token:', token); // Log token for debugging
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // Ensure the secret key is set correctly
+    console.log('Decoded Payload:', decoded); // Log decoded payload for debugging
+
     req.user = await User.findById(decoded.id);
     if (!req.user) {
       return res.status(401).json({ message: 'User not found' });
     }
+
     next();
   } catch (error) {
     console.error('Auth Middleware Error:', error.message);
