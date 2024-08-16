@@ -1,8 +1,8 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const Event = require('../models/EventSchema'); // Ensure the correct path to your model
+const express = require("express");
+const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const Event = require("../models/EventSchema"); // Ensure the correct path to your model
 
 const router = express.Router();
 
@@ -12,102 +12,133 @@ const upload = multer({ storage: storage });
 
 // Middleware to verify JWT
 const verifyToken = (req, res, next) => {
-    const token = req.header('Authorization').replace('Bearer ', '');
+  const token = req.header("Authorization").replace("Bearer ", "");
 
-    if (!token) {
-        return res.status(401).json({ message: 'Access denied. No token provided.' });
-    }
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "Access denied. No token provided." });
+  }
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (ex) {
-        res.status(400).json({ message: 'Invalid token.' });
-    }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (ex) {
+    res.status(400).json({ message: "Invalid token." });
+  }
 };
 
-router.get('/myevents', verifyToken, async (req, res) => {
-    try {
-        const userId = req.user._id; // Get user ID from the decoded token
-        const events = await Event.find({ userId: userId }); // Find events by user ID
-        res.json(events);
-    } catch (error) {
-        console.error('Error fetching events:', error); // Log the error details
-        res.status(500).json({ message: 'Failed to fetch events', error: error.message });
-    }
+router.get("/myevents", verifyToken, async (req, res) => {
+  try {
+    const userId = req.user._id; // Get user ID from the decoded token
+    const events = await Event.find({ userId: userId }); // Find events by user ID
+    res.json(events);
+  } catch (error) {
+    console.error("Error fetching events:", error); // Log the error details
+    res
+      .status(500)
+      .json({ message: "Failed to fetch events", error: error.message });
+  }
 });
-
 
 // Create event route
-router.post('/createevent', verifyToken, upload.single('banner'), async (req, res) => {
+router.post(
+  "/createevent",
+  verifyToken,
+  upload.single("banner"),
+  async (req, res) => {
     try {
-        const {
-            eventname,
-            eventdate,
-            description,
-            audience,
-            type,
-            price,
-            tech,
-            agenda,
-            hostname,
-            email,
-            country,
-            address,
-            city,
-            socialLinks,
-        } = req.body;
+      const {
+        eventname,
+        eventdate,
+        description,
+        audience,
+        type,
+        price,
+        tech,
+        agenda,
+        hostname,
+        email,
+        country,
+        address,
+        city,
+        socialLinks,
+      } = req.body;
 
-        const banner = req.file ? {
+      const banner = req.file
+        ? {
             data: req.file.buffer,
             contentType: req.file.mimetype,
-        } : null;
+          }
+        : null;
 
-        const event = new Event({
-            eventname,
-            eventdate,
-            description,
-            banner,
-            audience,
-            type,
-            price,
-            tech,
-            agenda,
-            hostname,
-            email,
-            country,
-            address,
-            city,
-            socialLinks,
-            userId: req.user._id, // Get userId from JWT payload
-        });
+      const event = new Event({
+        eventname,
+        eventdate,
+        description,
+        banner,
+        audience,
+        type,
+        price,
+        tech,
+        agenda,
+        hostname,
+        email,
+        country,
+        address,
+        city,
+        socialLinks,
+        userId: req.user._id, // Get userId from JWT payload
+      });
 
-        await event.save();
-        res.status(201).json({ message: 'Event created successfully!', event });
+      await event.save();
+      res.status(201).json({ message: "Event created successfully!", event });
     } catch (error) {
-        console.error('Error creating event:', error); // Log the error details
-        res.status(500).json({ message: 'Failed to create event', error: error.message });
+      console.error("Error creating event:", error); // Log the error details
+      res
+        .status(500)
+        .json({ message: "Failed to create event", error: error.message });
     }
+  }
+);
+
+router.delete("/deleteevent/:id", verifyToken, async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    const userId = req.user._id;
+
+    // Find the event and ensure it belongs to the logged-in user
+    const event = await Event.findOneAndDelete({
+      _id: eventId,
+      userId: userId,
+    });
+
+    if (!event) {
+      return res
+        .status(404)
+        .json({
+          message: "Event not found or not authorized to delete this event",
+        });
+    }
+
+    res.status(200).json({ message: "Event deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting event:", error); // Log the error details
+    res
+      .status(500)
+      .json({ message: "Failed to delete event", error: error.message });
+  }
 });
 
-router.delete('/deleteevent/:id', verifyToken, async (req, res) => {
-    try {
-        const eventId = req.params.id;
-        const userId = req.user._id;
-
-        // Find the event and ensure it belongs to the logged-in user
-        const event = await Event.findOneAndDelete({ _id: eventId, userId: userId });
-
-        if (!event) {
-            return res.status(404).json({ message: 'Event not found or not authorized to delete this event' });
-        }
-
-        res.status(200).json({ message: 'Event deleted successfully' });
-    } catch (error) {
-        console.error('Error deleting event:', error); // Log the error details
-        res.status(500).json({ message: 'Failed to delete event', error: error.message });
-    }
+router.get("/active", async (req, res) => {
+  try {
+    const events = await Event.find(); // Fetch active events
+    res.json(events);
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 module.exports = router;
