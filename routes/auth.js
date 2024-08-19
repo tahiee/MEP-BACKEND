@@ -13,20 +13,19 @@ router.post('/register', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Check if user with the given email already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'Email is already registered' });
         }
-        // Create a new user with a unique userid
+
+        // Create a new user with a unique userId
         const newUser = new User({
             email,
             password,
-            userid: uuidv4() // Generate a unique userid
+            userId: uuidv4(), // Ensure this is a unique value
         });
         await newUser.save();
 
-        // Generate JWT token
         const payload = { user: { id: newUser.id } };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
@@ -36,6 +35,7 @@ router.post('/register', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 
 
 // @route   POST /api/auth/login
