@@ -22,7 +22,7 @@ router.post('/register', async (req, res) => {
         const newUser = new User({
             email,
             password,
-            userId: uuidv4(), // Ensure this is a unique value
+            user_id: uuidv4(), // Ensure this is a unique value
         });
         await newUser.save();
 

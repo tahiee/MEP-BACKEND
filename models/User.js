@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema(
     },
     user_id: {
       type: String,
+      unique: true, // Ensure `user_id` is unique
       required: true,
     },
   },
