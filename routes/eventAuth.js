@@ -49,6 +49,7 @@ router.post(
   upload.single("banner"),
   async (req, res) => {
     try {
+        console.log('User ID from request:', req.user._id); // Log the user ID
       const {
         eventname,
         eventdate,
