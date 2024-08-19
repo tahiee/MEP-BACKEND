@@ -10,9 +10,11 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Password is required'],
     },
-    userid: {
-        type: String,
-        unique: false,
+    // This should be an ObjectId to match Event schema
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // Reference to User model
+        unique: true,
         default: null,
     }
 });

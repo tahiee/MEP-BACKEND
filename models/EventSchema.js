@@ -23,7 +23,7 @@ const eventSchema = new mongoose.Schema({
   instagram: String,
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Ensure userId is required
 }, {
-  timestamps: true // Optionally add timestamps (createdAt, updatedAt)
+  timestamps: true 
 });
 
 // Create and export the model
