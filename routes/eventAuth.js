@@ -99,8 +99,8 @@ router.post(
         city,
         website,
         instagram,
-        userId: req.user._id, // Set userId from the decoded token
-      });
+        userid: req.user._id, // Assign the authenticated user's ID
+    });
 
       await event.save();
       res.status(201).json({ message: "Event created successfully!", event });
