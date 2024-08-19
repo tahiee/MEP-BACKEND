@@ -63,7 +63,8 @@ router.post(
         country,
         address,
         city,
-        socialLinks,
+        website,
+        instagram,
       } = req.body;
 
       const banner = req.file
@@ -88,7 +89,8 @@ router.post(
         country,
         address,
         city,
-        socialLinks,
+        website,
+        instagram,
         userId: req.user._id, // Get userId from JWT payload
       });
 
