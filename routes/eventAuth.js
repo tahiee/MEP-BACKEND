@@ -44,73 +44,74 @@ router.get("/myevents", verifyToken, async (req, res) => {
 
 // Create event route
 router.post(
-    "/createevent",
-    verifyToken,
-    upload.single("banner"),
-    async (req, res) => {
-      try {
-        // Log userId to ensure it's being correctly set
-        console.log('User ID from request:', req.user._id); 
-  
-        const {
-          eventname,
-          eventdate,
-          description,
-          audience,
-          type,
-          price,
-          tech,
-          agenda,
-          hostname,
-          email,
-          country,
-          address,
-          city,
-          website,
-          instagram,
-        } = req.body;
-  
-        const banner = req.file
-          ? {
-              data: req.file.buffer,
-              contentType: req.file.mimetype,
-            }
-          : null;
-  
-        // Ensure req.user._id is set
-        if (!req.user || !req.user._id) {
-          return res.status(400).json({ message: 'User ID is missing.' });
-        }
-  
-        const event = new Event({
-          eventname,
-          eventdate,
-          description,
-          banner,
-          audience,
-          type,
-          price,
-          tech,
-          agenda,
-          hostname,
-          email,
-          country,
-          address,
-          city,
-          website,
-          instagram,
-          userId: req.user._id, // Set userId from the decoded token
-        });
-  
-        await event.save();
-        res.status(201).json({ message: "Event created successfully!", event });
-      } catch (error) {
-        console.error("Error creating event:", error); // Log the error details
-        res.status(500).json({ message: "Failed to create event", error: error.message });
+  "/createevent",
+  verifyToken,
+  upload.single("banner"),
+  async (req, res) => {
+    try {
+      // Log userId to ensure it's being correctly set
+      console.log("User ID from request:", req.user._id);
+
+      const {
+        eventname,
+        eventdate,
+        description,
+        audience,
+        type,
+        price,
+        tech,
+        agenda,
+        hostname,
+        email,
+        country,
+        address,
+        city,
+        website,
+        instagram,
+      } = req.body;
+
+      const banner = req.file
+        ? {
+            data: req.file.buffer,
+            contentType: req.file.mimetype,
+          }
+        : null;
+
+      // Ensure req.user._id is set
+      if (!req.user || !req.user._id) {
+        return res.status(400).json({ message: "User ID is missing." });
       }
+
+      const event = new Event({
+        eventname,
+        eventdate,
+        description,
+        banner,
+        audience,
+        type,
+        price,
+        tech,
+        agenda,
+        hostname,
+        email,
+        country,
+        address,
+        city,
+        website,
+        instagram,
+        userId: req.user._id, // Set userId from the decoded token
+      });
+
+      await event.save();
+      res.status(201).json({ message: "Event created successfully!", event });
+    } catch (error) {
+      console.error("Error creating event:", error); // Log the error details
+      res
+        .status(500)
+        .json({ message: "Failed to create event", error: error.message });
     }
-  );
-  
+  }
+);
 
 router.delete("/deleteevent/:id", verifyToken, async (req, res) => {
   try {

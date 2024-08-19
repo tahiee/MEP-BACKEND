@@ -21,7 +21,7 @@ const eventSchema = new mongoose.Schema({
   city: String,
   website: String,
   instagram: String,
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Ensure userId is required
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User"}, // Ensure userId is required
 }, {
   timestamps: true 
 });
