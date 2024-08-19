@@ -11,107 +11,98 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // Middleware to verify JWT
+// Middleware to verify JWT
 const verifyToken = (req, res, next) => {
-  const token = req.header("Authorization").replace("Bearer ", "");
-
-  if (!token) {
-    return res
-      .status(401)
-      .json({ message: "Access denied. No token provided." });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded.user; // Ensure this matches the payload structure
-    next();
-  } catch (ex) {
-    res.status(400).json({ message: "Invalid token." });
-  }
-};
-
-router.get("/myevents", verifyToken, async (req, res) => {
-  try {
-    const userId = req.user._id; // Get user ID from the decoded token
-    const events = await Event.find({ userId: userId }); // Find events by user ID
-    res.json(events);
-  } catch (error) {
-    console.error("Error fetching events:", error); // Log the error details
-    res
-      .status(500)
-      .json({ message: "Failed to fetch events", error: error.message });
-  }
-});
-
-// Create event route
-router.post(
-  "/createevent",
-  verifyToken,
-  upload.single("banner"),
-  async (req, res) => {
-    try {
-      // Log userId to ensure it's being correctly set
-      console.log("User ID from request:", req.user._id);
-
-      const {
-        eventname,
-        eventdate,
-        description,
-        audience,
-        type,
-        price,
-        tech,
-        agenda,
-        hostname,
-        email,
-        country,
-        address,
-        city,
-        website,
-        instagram,
-      } = req.body;
-
-      const banner = req.file
-        ? {
-            data: req.file.buffer,
-            contentType: req.file.mimetype,
-          }
-        : null;
-
-      // Ensure req.user._id is set
-    //   if (!req.user || !req.user._id) {
-    //     return res.status(400).json({ message: "User ID is missing." });
-    //   }
-
-      const event = new Event({
-        eventname,
-        eventdate,
-        description,
-        banner,
-        audience,
-        type,
-        price,
-        tech,
-        agenda,
-        hostname,
-        email,
-        country,
-        address,
-        city,
-        website,
-        instagram,
-        userId: req.user._id, // Set userId from the decoded token
-      });
-
-      await event.save();
-      res.status(201).json({ message: "Event created successfully!", event });
-    } catch (error) {
-      console.error("Error creating event:", error); // Log the error details
-      res
-        .status(500)
-        .json({ message: "Failed to create event", error: error.message });
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+  
+    if (!token) {
+      return res.status(401).json({ message: "Access denied. No token provided." });
     }
-  }
-);
+  
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded.user; // Ensure this matches the payload structure
+      next();
+    } catch (ex) {
+      res.status(400).json({ message: "Invalid token." });
+    }
+  };
+  
+  // Route to get user events
+  router.get("/myevents", verifyToken, async (req, res) => {
+    try {
+      const userEmail = req.user.email; // Get user email from the decoded token
+      const events = await Event.find({ userEmail: userEmail }); // Find events by user email
+      res.json(events);
+    } catch (error) {
+      console.error("Error fetching events:", error); // Log the error details
+      res.status(500).json({ message: "Failed to fetch events", error: error.message });
+    }
+  });
+  
+  // Route to create a new event
+  router.post(
+    "/createevent",
+    verifyToken,
+    upload.single("banner"),
+    async (req, res) => {
+      try {
+        console.log("User email from request:", req.user.email); // Log userEmail for debugging
+  
+        const {
+          eventname,
+          eventdate,
+          description,
+          audience,
+          type,
+          price,
+          tech,
+          agenda,
+          hostname,
+          email,
+          country,
+          address,
+          city,
+          website,
+          instagram,
+        } = req.body;
+  
+        const banner = req.file
+          ? {
+              data: req.file.buffer,
+              contentType: req.file.mimetype,
+            }
+          : null;
+  
+        // Create a new event
+        const event = new Event({
+          eventname,
+          eventdate,
+          description,
+          banner,
+          audience,
+          type,
+          price,
+          tech,
+          agenda,
+          hostname,
+          email,
+          country,
+          address,
+          city,
+          website,
+          instagram,
+          userEmail: req.user.email, // Set userEmail from the decoded token
+        });
+  
+        await event.save();
+        res.status(201).json({ message: "Event created successfully!", event });
+      } catch (error) {
+        console.error("Error creating event:", error); // Log the error details
+        res.status(500).json({ message: "Failed to create event", error: error.message });
+      }
+    }
+  );
 
 router.delete("/deleteevent/:id", verifyToken, async (req, res) => {
   try {

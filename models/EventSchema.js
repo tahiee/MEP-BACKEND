@@ -21,7 +21,7 @@ const eventSchema = new mongoose.Schema({
   city: String,
   website: String,
   instagram: String,
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User"}, // Ensure userId is required
+  userEmail: { type: String } // Store user email instead of ObjectId
 }, {
   timestamps: true 
 });
