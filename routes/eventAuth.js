@@ -78,9 +78,9 @@ router.post(
         : null;
 
       // Ensure req.user._id is set
-      if (!req.user || !req.user._id) {
-        return res.status(400).json({ message: "User ID is missing." });
-      }
+    //   if (!req.user || !req.user._id) {
+    //     return res.status(400).json({ message: "User ID is missing." });
+    //   }
 
       const event = new Event({
         eventname,
