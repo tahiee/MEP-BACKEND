@@ -91,8 +91,8 @@ router.post(
         city,
         website,
         instagram,
-        userId: req.user._id, // Get userId from JWT payload
-      });
+        userId: req.user._id, // Ensure this is set correctly
+    });
 
       await event.save();
       res.status(201).json({ message: "Event created successfully!", event });

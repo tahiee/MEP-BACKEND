@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 
+// Define the event schema
 const eventSchema = new mongoose.Schema({
   eventname: { type: String, required: true },
-  eventdate: { type: Date },
+  eventdate: { type: Date }, 
   description: String,
   banner: {
     data: Buffer,
@@ -20,7 +21,10 @@ const eventSchema = new mongoose.Schema({
   city: String,
   website: String,
   instagram: String,
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Ensure userId is required
+}, {
+  timestamps: true // Optionally add timestamps (createdAt, updatedAt)
 });
 
-module.exports = mongoose.model("eventdetails", eventSchema);
+// Create and export the model
+module.exports = mongoose.model("Event", eventSchema); // Use "Event" as the model name
